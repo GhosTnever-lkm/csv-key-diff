@@ -24,8 +24,12 @@ class CsvDiffTests(unittest.TestCase):
         self.temp.cleanup()
 
     def write_pair(self, before: str, after: str):
-        self.before.write_text(before, encoding="utf-8")
-        self.after.write_text(after, encoding="utf-8")
+        # newline="" keeps embedded LF in quoted fields intact on Windows,
+        # where text mode would otherwise translate them to CRLF.
+        with open(self.before, "w", encoding="utf-8", newline="") as handle:
+            handle.write(before)
+        with open(self.after, "w", encoding="utf-8", newline="") as handle:
+            handle.write(after)
 
     def test_reports_added_removed_changed_and_unchanged_rows(self):
         self.write_pair("id,name,qty\n1,alpha,2\n2,beta,1\n4,keep,3\n",
