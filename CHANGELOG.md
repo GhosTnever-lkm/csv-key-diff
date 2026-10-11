@@ -1,3 +1,8 @@
+## 0.1.3 - 2026-10-11
+
+- Fix tests on Windows: fixture CSVs are now written with `newline=""`, so quoted LF line breaks inside fields are not translated to CRLF.
+
+
 ## 0.1.2 - 2026-10-11
 
 - CI now also runs the test suite on Windows (windows-latest), not only Ubuntu.
