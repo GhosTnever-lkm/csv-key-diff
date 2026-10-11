@@ -1,5 +1,7 @@
 # CSV Key Diff
 
+[![CI](https://github.com/GhosTnever-lkm/csv-key-diff/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/GhosTnever-lkm/csv-key-diff/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/GhosTnever-lkm/csv-key-diff)](https://github.com/GhosTnever-lkm/csv-key-diff/releases) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Compare two CSV exports by a stable, unique key. See exactly which records were added, removed, or changed—and which fields changed—without loading the files into a spreadsheet or uploading them to a service.
 
 **Useful for:** reviewing game/mod catalog exports, localization tables, inventory snapshots, and periodic operational CSV exports.

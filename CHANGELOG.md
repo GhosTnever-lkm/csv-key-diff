@@ -1,3 +1,7 @@
+## 0.1.1 - 2026-10-11
+
+- Add build, release, and license badges to the README; publish package version through `--version`.
+
 # Changelog
 
 ## 0.1.0 - 2026-10-11
