@@ -1,3 +1,8 @@
+## 0.1.2 - 2026-10-11
+
+- CI now also runs the test suite on Windows (windows-latest), not only Ubuntu.
+
+
 ## 0.1.1 - 2026-10-11
 
 - Add build, release, and license badges to the README; publish package version through `--version`.
