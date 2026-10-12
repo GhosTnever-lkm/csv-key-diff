@@ -5,11 +5,15 @@ import os
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+from csv_key_diff import __version__
 from csv_key_diff.core import CsvDiffError, compare_files, read_csv, render_json, render_markdown
 
 
@@ -113,6 +117,24 @@ class CsvDiffTests(unittest.TestCase):
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 2)
         self.assertIn("must not overwrite", result.stderr)
+
+
+class VersionMetadataTests(unittest.TestCase):
+    def test_package_cli_project_version_file_and_changelog_match(self):
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertEqual(__version__, project["version"])
+        self.assertEqual(__version__, (ROOT / "VERSION").read_text(encoding="utf-8").strip())
+        self.assertTrue(changelog.startswith(f"## {__version__} - "))
+
+    def test_cli_version_reports_package_version(self):
+        from csv_key_diff.cli import main
+
+        output = StringIO()
+        with redirect_stdout(output), self.assertRaises(SystemExit) as exit_info:
+            main(["--version"])
+        self.assertEqual(0, exit_info.exception.code)
+        self.assertEqual(f"csv-key-diff {__version__}\n", output.getvalue())
 
 
 if __name__ == "__main__":

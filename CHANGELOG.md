@@ -1,3 +1,9 @@
+## 0.1.4 - 2026-10-12
+
+- Synchronize package, CLI, and `VERSION` metadata after detecting that `--version` lagged behind the published release.
+- Add metadata regression tests and make the release workflow reject a tag that does not match the package version.
+- Pin GitHub Actions dependencies and publish release assets with the GitHub CLI.
+
 ## 0.1.3 - 2026-10-11
 
 - Fix tests on Windows: fixture CSVs are now written with `newline=""`, so quoted LF line breaks inside fields are not translated to CRLF.
