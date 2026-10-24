@@ -1,3 +1,7 @@
+## 0.1.5 - 2026-10-25
+
+- Escape Markdown link and formatting syntax in report cells, and support arbitrary backtick runs in inline-code keys.
+
 ## 0.1.4 - 2026-10-12
 
 - Synchronize package, CLI, and `VERSION` metadata after detecting that `--version` lagged behind the published release.
