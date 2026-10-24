@@ -97,6 +97,16 @@ class CsvDiffTests(unittest.TestCase):
         self.assertIn("новый", first)
         self.assertEqual(json.loads(first)["summary"]["changed"], 1)
 
+    def test_markdown_escapes_links_and_handles_backticks_in_keys(self):
+        self.write_pair("id,text\n1,old\n", "id,text\n1,[click](https://example.com)\n")
+        report = render_markdown(compare_files(self.before, self.after, "id"))
+        self.assertIn(r"\[click\]\(https://example.com\)", report)
+        self.assertNotIn("[click](https://example.com)", report)
+
+        self.write_pair("id,text\n1,old\n", "id,text\n`[key](https://example.com)`,new\n")
+        report = render_markdown(compare_files(self.before, self.after, "id"))
+        self.assertIn("`` `[key](https://example.com)` ``", report)
+
     def test_size_limit_is_enforced(self):
         self.write_pair("id,x\n1,too long\n", "id,x\n1,ok\n")
         with self.assertRaisesRegex(CsvDiffError, "exceeds"):

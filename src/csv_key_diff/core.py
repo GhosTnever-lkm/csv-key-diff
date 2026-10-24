@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import html
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -125,10 +126,19 @@ def render_json(result: DiffResult) -> str:
 
 
 def _cell(value: str) -> str:
-    """Render untrusted values as safe, single-cell Markdown text."""
+    """Escape untrusted values so Markdown treats them as plain table text."""
     escaped = html.escape(value.replace("\\", "\\\\"), quote=False)
-    escaped = escaped.replace("|", "\\|")
+    for character in "|[]()*_`~":
+        escaped = escaped.replace(character, "\\" + character)
     return escaped.replace("\r\n", "<br>").replace("\n", "<br>").replace("\r", "<br>")
+
+
+def _code(value: str) -> str:
+    """Wrap arbitrary input in an inline code span without delimiter collisions."""
+    longest = max((len(run) for run in re.findall(r"`+", value)), default=0)
+    delimiter = "`" * (longest + 1)
+    padding = " " if value.startswith((" ", "`")) or value.endswith((" ", "`")) else ""
+    return f"{delimiter}{padding}{value}{padding}{delimiter}"
 
 
 def render_markdown(result: DiffResult) -> str:
@@ -136,14 +146,14 @@ def render_markdown(result: DiffResult) -> str:
     lines = [
         "# CSV Key Diff report",
         "",
-        f"Key column: `{_cell(result.key_column)}`",
+        f"Key column: {_code(result.key_column)}",
         "",
         f"Added: **{summary['added']}** · Removed: **{summary['removed']}** · Changed: **{summary['changed']}** · Unchanged: **{summary['unchanged']}**",
     ]
     if result.added:
-        lines.extend(["", "## Added rows", "", f"Keys: {', '.join('`'+_cell(row[result.key_column])+'`' for row in result.added)}"])
+        lines.extend(["", "## Added rows", "", f"Keys: {', '.join(_code(row[result.key_column]) for row in result.added)}"])
     if result.removed:
-        lines.extend(["", "## Removed rows", "", f"Keys: {', '.join('`'+_cell(row[result.key_column])+'`' for row in result.removed)}"])
+        lines.extend(["", "## Removed rows", "", f"Keys: {', '.join(_code(row[result.key_column]) for row in result.removed)}"])
     if result.changed:
         lines.extend(["", "## Changed fields", "", "| Key | Field | Before | After |", "| --- | --- | --- | --- |"])
         for entry in result.changed:
